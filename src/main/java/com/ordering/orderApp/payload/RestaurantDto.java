@@ -6,17 +6,29 @@ public class RestaurantDto {
 	private String description;
 	private String address;
 	private String imageUrl;
-	public RestaurantDto(Long id, String name, String description, String address, String imageUrl) {
+	private double averageRating;
+
+	public RestaurantDto(Long id, String name, String description, String address, String imageUrl,
+			double averageRating) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.address = address;
 		this.imageUrl = imageUrl;
+		this.averageRating = averageRating;
 	}
-	
+
+	public double getAverageRating() {
+		return averageRating;
+	}
+
+	public void setAverageRating(double averageRating) {
+		this.averageRating = averageRating;
+	}
+
 	public RestaurantDto() {
-		
+
 	}
 
 	public Long getId() {
@@ -58,5 +70,5 @@ public class RestaurantDto {
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
-	
+
 }

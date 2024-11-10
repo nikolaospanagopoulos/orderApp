@@ -23,18 +23,41 @@ public class Restaurant {
 	private String description;
 	private String address;
 	private String imageUrl;
+	private double averageRating;
 
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Dish> dishes;
 
-	public Restaurant(Long id, String name, String description, String address, String imageUrl, Set<Dish> dishes) {
+	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<Rating> ratings;
+
+	public Set<Rating> getRatings() {
+		return ratings;
+	}
+
+	public void setRatings(Set<Rating> ratings) {
+		this.ratings = ratings;
+	}
+
+	public Restaurant(Long id, String name, String description, String address, String imageUrl, Set<Dish> dishes,
+			Set<Rating> ratings, double averageRating) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.address = address;
 		this.imageUrl = imageUrl;
+		this.averageRating = 0.0;
 		this.dishes = new HashSet<Dish>();
+		this.ratings = new HashSet<Rating>();
+	}
+
+	public double getAverageRating() {
+		return averageRating;
+	}
+
+	public void setAverageRating(double averageRating) {
+		this.averageRating = averageRating;
 	}
 
 	public Restaurant() {

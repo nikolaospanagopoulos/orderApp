@@ -23,6 +23,12 @@ public class Dish {
 	private double price;
 	private LocalDate createdDate;
 
+	@Override
+	public String toString() {
+		return "Dish [id=" + id + ", name=" + name + ", description=" + description + ", price=" + price
+				+ ", createdDate=" + createdDate + ", restaurant=" + restaurant + "]";
+	}
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "restaurant_id", nullable = false)
 	private Restaurant restaurant;
