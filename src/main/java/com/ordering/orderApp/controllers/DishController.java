@@ -2,6 +2,7 @@ package com.ordering.orderApp.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,14 @@ public class DishController {
 	public DishController(DishService dishService) {
 		super();
 		this.dishService = dishService;
+	}
+
+	@DeleteMapping("/restaurants/{restaurantId}/dishes/{dishId}")
+	public ResponseEntity<ApiResponse<DishDto>> deleteDishById(@PathVariable(value = "restaurantId") long restaurantId,
+			@PathVariable(value = "dishId") long dishId) {
+		dishService.deleteDishById(restaurantId, dishId);
+		ApiResponse<DishDto> res = new ApiResponse<>();
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	@PutMapping("/restaurants/{restaurantId}/dishes/{dishId}")

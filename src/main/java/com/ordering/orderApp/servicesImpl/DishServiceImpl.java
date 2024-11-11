@@ -72,7 +72,6 @@ public class DishServiceImpl implements DishService {
 
 	@Override
 	public DishDto updateDish(long restaurantId, long dishId, DishDto reqBody) {
-		System.out.println(reqBody);
 		Restaurant found = findRestaurantById(restaurantId);
 		Dish foundDish = getDishEntityById(dishId);
 		if (!foundDish.getRestaurant().getId().equals(found.getId())) {
@@ -102,6 +101,16 @@ public class DishServiceImpl implements DishService {
 				dishesPage.getNumber(), dishesPage.getSize(), dishesPage.getTotalElements(), dishesPage.getTotalPages(),
 				dishesPage.isLast());
 		return dishResponsePaginationObject;
+	}
+
+	@Override
+	public void deleteDishById(long restaurantId, long dishId) {
+		Restaurant found = findRestaurantById(restaurantId);
+		Dish foundDish = getDishEntityById(dishId);
+		if (!foundDish.getRestaurant().getId().equals(found.getId())) {
+			throw new ResourceNotFoundException("Dish", "id", Long.toString(dishId));
+		}
+		dishRepository.delete(foundDish);
 	}
 
 }

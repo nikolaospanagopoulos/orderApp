@@ -64,18 +64,6 @@ public class RestaurantControllerTest {
 
 	@BeforeEach
 	public void testCreateRestaurant() throws Exception {
-		String uniqueName = "test_name_" + UUID.randomUUID();
-		MvcResult result = this.mockMvc
-				.perform(post("/api/restaurants").contentType(MediaType.APPLICATION_JSON)
-						.content("{\n" + "    \"name\":\"test name " + uniqueName + "\",\n"
-								+ "    \"description\":\"test description\",\n" + "    \"address\":\"test address\",\n"
-								+ "    \"imageUrl\":\"test img\"\n" + "}")
-						.characterEncoding("utf-8"))
-				.andExpect(status().isCreated()).andReturn();
-		ObjectMapper objectMapper = new ObjectMapper();
-		String responseContent = result.getResponse().getContentAsString();
-		JsonNode responseJSON = objectMapper.readTree(responseContent);
-		long restaurantId = responseJSON.get("id").asLong();
-		idOfRestaurant = restaurantId;
+		idOfRestaurant = TestUtilis.createRestaurant(this.mockMvc);
 	}
 }

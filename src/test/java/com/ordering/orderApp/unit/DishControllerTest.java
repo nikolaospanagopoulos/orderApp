@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.contains;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.util.ArrayList;
@@ -47,6 +47,12 @@ public class DishControllerTest {
 	}
 
 	@Test
+	public void testDeleteDish() throws Exception {
+		this.mockMvc.perform(delete("/api/restaurants/" + idOfRestaurant + "/dishes/" + idOfDish))
+				.andExpect(status().isOk()).andDo(print());
+	}
+
+	@Test
 	public void testGetAllDishesByRestaurantId() throws Exception {
 		testCreateDish();
 		testCreateDish();
@@ -73,19 +79,7 @@ public class DishControllerTest {
 	}
 
 	private void createRestaurant() throws Exception {
-		String uniqueName = "test_name_" + UUID.randomUUID();
-		MvcResult result = this.mockMvc
-				.perform(post("/api/restaurants").contentType(MediaType.APPLICATION_JSON)
-						.content("{\n" + "    \"name\":\"test name " + uniqueName + "\",\n"
-								+ "    \"description\":\"test description\",\n" + "    \"address\":\"test address\",\n"
-								+ "    \"imageUrl\":\"test img\"\n" + "}")
-						.characterEncoding("utf-8"))
-				.andExpect(status().isCreated()).andReturn();
-		ObjectMapper objectMapper = new ObjectMapper();
-		String responseContent = result.getResponse().getContentAsString();
-		JsonNode responseJSON = objectMapper.readTree(responseContent);
-		long restaurantId = responseJSON.get("id").asLong();
-		idOfRestaurant = restaurantId;
+		idOfRestaurant = TestUtilis.createRestaurant(this.mockMvc);
 
 	}
 
@@ -117,8 +111,6 @@ public class DishControllerTest {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String responseContent = mvcResult.getResponse().getContentAsString();
 		JsonNode responseJson = objectMapper.readTree(responseContent);
-		long dishId = responseJson.get("id").asLong();
-		idOfDish = dishId;
-
+		idOfDish = responseJson.get("id").asLong();
 	}
 }

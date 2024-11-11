@@ -86,7 +86,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	public RestaurantDto getRestaurantById(long restaurantId) {
 		Restaurant found = getRestaurantEntityById(restaurantId);
 		return modelMapper.map(found, RestaurantDto.class);
-	}
+	} 
 
 	@Override
 	public void deleteRestaurantById(long restautantId) {

@@ -48,4 +48,19 @@ public class RatingServiceImpl implements RatingService {
 		return modelMapper.map(toSave, RatingDto.class);
 	}
 
+	private Rating getRatingEntityById(long ratingId) {
+		return ratingRepository.findById(ratingId)
+				.orElseThrow(() -> new ResourceNotFoundException("Rating", "id", Long.toString(ratingId)));
+	}
+
+	@Override
+	public RatingDto getRatingById(long restaurantId, long ratingId) {
+		Restaurant foundRestaurant = findRestaurantById(restaurantId);
+		Rating foundRating = getRatingEntityById(ratingId);
+		if (!foundRating.getRestaurant().getId().equals(foundRestaurant.getId())) {
+			throw new ResourceNotFoundException("Rating", "id", Long.toString(ratingId));
+		}
+		return modelMapper.map(foundRating, RatingDto.class);
+	}
+
 }

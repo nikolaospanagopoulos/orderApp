@@ -12,4 +12,6 @@ public interface DishService {
 
 	DishResponsePaginationObject getDishesByRestaurantId(long restaurantId, int pageNo, int pageSize, String sortBy,
 			String sortDir);
+
+	void deleteDishById(long restaurantId, long dishId);
 }
