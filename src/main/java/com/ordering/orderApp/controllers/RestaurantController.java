@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ordering.orderApp.payload.ApiResponse;
+import com.ordering.orderApp.payload.ResponsePaginationObject;
 import com.ordering.orderApp.payload.RestaurantDto;
-import com.ordering.orderApp.payload.RestaurantResponsePaginationObject;
 import com.ordering.orderApp.services.RestaurantService;
 import com.ordering.orderApp.utilis.Constants.ApplicationConstants;
 
@@ -55,12 +55,12 @@ public class RestaurantController {
 	}
 
 	@GetMapping
-	public ResponseEntity<ApiResponse<RestaurantResponsePaginationObject>> getRestaurants(
+	public ResponseEntity<ApiResponse<ResponsePaginationObject<RestaurantDto>>> getRestaurants(
 			@RequestParam(value = "pageNo", defaultValue = ApplicationConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNo,
 			@RequestParam(value = "pageSize", defaultValue = ApplicationConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
 			@RequestParam(value = "sortBy", defaultValue = ApplicationConstants.DEFAULT_SORT_BY, required = false) String sortBy,
 			@RequestParam(value = "sortDir", defaultValue = ApplicationConstants.DEFAULT_SORT_DIRECTION, required = false) String sortDir) {
-		ApiResponse<RestaurantResponsePaginationObject> res = new ApiResponse<RestaurantResponsePaginationObject>(
+		ApiResponse<ResponsePaginationObject<RestaurantDto>> res = new ApiResponse<>(
 				restaurantService.getRestaurants(pageNo, pageSize, sortBy, sortDir));
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}

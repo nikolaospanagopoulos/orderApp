@@ -1,12 +1,21 @@
 package com.ordering.orderApp.servicesImpl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.ordering.orderApp.entities.Rating;
 import com.ordering.orderApp.entities.Restaurant;
 import com.ordering.orderApp.exceptions.ResourceNotFoundException;
 import com.ordering.orderApp.payload.RatingDto;
+import com.ordering.orderApp.payload.ResponsePaginationObject;
+import com.ordering.orderApp.payload.entities.RatingResponsePaginationObject;
 import com.ordering.orderApp.repositories.RatingRepository;
 import com.ordering.orderApp.repositories.RestaurantRepository;
 import com.ordering.orderApp.services.RatingService;
@@ -51,6 +60,23 @@ public class RatingServiceImpl implements RatingService {
 	private Rating getRatingEntityById(long ratingId) {
 		return ratingRepository.findById(ratingId)
 				.orElseThrow(() -> new ResourceNotFoundException("Rating", "id", Long.toString(ratingId)));
+	}
+
+	public ResponsePaginationObject<RatingDto> getRatingsByRestaurantId(long restaurantId, int pageNo, int pageSize,
+			String sortBy, String sortDir) {
+
+		findRestaurantById(restaurantId);
+		Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.DESC.name()) ? Sort.by(sortBy).descending()
+				: Sort.by(sortBy).ascending();
+		Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+		Page<Rating> ratingsPage = ratingRepository.findByRestaurantId(restaurantId, pageable);
+		List<RatingDto> content = ratingsPage.getContent().stream().map(r -> modelMapper.map(r, RatingDto.class))
+				.collect(Collectors.toList());
+		RatingResponsePaginationObject responsePaginationObject = new RatingResponsePaginationObject(content,
+				ratingsPage.getNumber(), ratingsPage.getSize(), ratingsPage.getTotalElements(),
+				ratingsPage.getTotalPages(), ratingsPage.isLast());
+
+		return responsePaginationObject;
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class ApiResponse<T> {
 	private boolean success;
-	//show only if not null
+	// show only if not null
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private T data;
 	private String message;
@@ -22,7 +22,7 @@ public class ApiResponse<T> {
 		this.data = data;
 		this.message = message;
 	}
-	
+
 	public ApiResponse() {
 		super();
 		this.success = true;

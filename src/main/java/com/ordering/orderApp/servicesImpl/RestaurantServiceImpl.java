@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 import com.ordering.orderApp.entities.Restaurant;
 import com.ordering.orderApp.exceptions.ResourceAlreadyExistsException;
 import com.ordering.orderApp.exceptions.ResourceNotFoundException;
+import com.ordering.orderApp.payload.ResponsePaginationObject;
 import com.ordering.orderApp.payload.RestaurantDto;
-import com.ordering.orderApp.payload.RestaurantResponsePaginationObject;
+import com.ordering.orderApp.payload.entities.RestaurantResponsePaginationObject;
 import com.ordering.orderApp.repositories.RestaurantRepository;
 import com.ordering.orderApp.services.RestaurantService;
 
@@ -58,7 +59,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 
 	@Override
-	public RestaurantResponsePaginationObject getRestaurants(int pageNo, int pageSize, String sortBy, String sortDir) {
+	public ResponsePaginationObject<RestaurantDto> getRestaurants(int pageNo, int pageSize, String sortBy,
+			String sortDir) {
 		Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.DESC.name()) ? Sort.by(sortBy).descending()
 				: Sort.by(sortBy).ascending();
 		Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
@@ -66,8 +68,10 @@ public class RestaurantServiceImpl implements RestaurantService {
 		List<Restaurant> listOfRestaurants = restaurants.getContent();
 		List<RestaurantDto> content = listOfRestaurants.stream().map(r -> mapToRestaurantDto(r))
 				.collect(Collectors.toList());
-		return new RestaurantResponsePaginationObject(content, restaurants.getNumber(), restaurants.getSize(),
-				restaurants.getTotalElements(), restaurants.getTotalPages(), restaurants.isLast());
+		return new RestaurantResponsePaginationObject
+
+		(content, restaurants.getNumber(), restaurants.getSize(), restaurants.getTotalElements(),
+				restaurants.getTotalPages(), restaurants.isLast());
 	}
 
 	@Override
@@ -86,7 +90,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 	public RestaurantDto getRestaurantById(long restaurantId) {
 		Restaurant found = getRestaurantEntityById(restaurantId);
 		return modelMapper.map(found, RestaurantDto.class);
-	} 
+	}
 
 	@Override
 	public void deleteRestaurantById(long restautantId) {

@@ -2,18 +2,18 @@ package com.ordering.orderApp.payload;
 
 import java.util.List;
 
-public class DishResponsePaginationObject {
-	private List<DishDto> dishes;
+public abstract class ResponsePaginationObject<T> {
+	private List<T> data;
 	private int pageNumber;
 	private int pageSize;
 	private long totalElements;
 	private int totalPages;
 	private boolean last;
 
-	public DishResponsePaginationObject(List<DishDto> dishes, int pageNumber, int pageSize, long totalElements,
-			int totalPages, boolean last) {
+	public ResponsePaginationObject(List<T> data, int pageNumber, int pageSize, long totalElements, int totalPages,
+			boolean last) {
 		super();
-		this.dishes = dishes;
+		this.data = data;
 		this.pageNumber = pageNumber;
 		this.pageSize = pageSize;
 		this.totalElements = totalElements;
@@ -21,12 +21,12 @@ public class DishResponsePaginationObject {
 		this.last = last;
 	}
 
-	public List<DishDto> getDishes() {
-		return dishes;
+	public List<T> getData() {
+		return data;
 	}
 
-	public void setDishes(List<DishDto> dishes) {
-		this.dishes = dishes;
+	public void setData(List<T> data) {
+		this.data = data;
 	}
 
 	public int getPageNumber() {

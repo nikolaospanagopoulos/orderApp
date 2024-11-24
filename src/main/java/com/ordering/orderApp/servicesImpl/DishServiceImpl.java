@@ -15,7 +15,8 @@ import com.ordering.orderApp.entities.Restaurant;
 import com.ordering.orderApp.exceptions.ResourceAlreadyExistsException;
 import com.ordering.orderApp.exceptions.ResourceNotFoundException;
 import com.ordering.orderApp.payload.DishDto;
-import com.ordering.orderApp.payload.DishResponsePaginationObject;
+import com.ordering.orderApp.payload.ResponsePaginationObject;
+import com.ordering.orderApp.payload.entities.DishResponsePaginationObject;
 import com.ordering.orderApp.repositories.DishRepository;
 import com.ordering.orderApp.repositories.RestaurantRepository;
 import com.ordering.orderApp.services.DishService;
@@ -88,19 +89,19 @@ public class DishServiceImpl implements DishService {
 	}
 
 	@Override
-	public DishResponsePaginationObject getDishesByRestaurantId(long restaurantId, int pageNo, int pageSize,
+	public ResponsePaginationObject<DishDto> getDishesByRestaurantId(long restaurantId, int pageNo, int pageSize,
 			String sortBy, String sortDir) {
-	    findRestaurantById(restaurantId);
+		findRestaurantById(restaurantId);
 		Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.DESC.name()) ? Sort.by(sortBy).descending()
 				: Sort.by(sortBy).ascending();
 		Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
 		Page<Dish> dishesPage = dishRepository.findByRestaurantId(restaurantId, pageable);
 		List<DishDto> content = dishesPage.getContent().stream().map(d -> modelMapper.map(d, DishDto.class))
 				.collect(Collectors.toList());
-		DishResponsePaginationObject dishResponsePaginationObject = new DishResponsePaginationObject(content,
+		DishResponsePaginationObject responsePaginationObject = new DishResponsePaginationObject(content,
 				dishesPage.getNumber(), dishesPage.getSize(), dishesPage.getTotalElements(), dishesPage.getTotalPages(),
 				dishesPage.isLast());
-		return dishResponsePaginationObject;
+		return responsePaginationObject;
 	}
 
 	@Override
