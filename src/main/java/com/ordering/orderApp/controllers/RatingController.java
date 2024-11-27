@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +26,13 @@ public class RatingController {
 	public RatingController(RatingService ratingService) {
 		super();
 		this.ratingService = ratingService;
+	}
+
+	@PutMapping("/restaurants/{restaurantId}/ratings/{ratingId}")
+	public ResponseEntity<ApiResponse<RatingDto>> updateRating(@PathVariable(value = "restaurantId") long restaurantId,
+			@PathVariable(value = "ratingId") long ratingId, @RequestBody RatingDto reqBody) {
+		ApiResponse<RatingDto> res = new ApiResponse<>(ratingService.updateRating(restaurantId, ratingId, reqBody));
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	@GetMapping("/restaurants/{restaurantId}/ratings/{ratingId}")

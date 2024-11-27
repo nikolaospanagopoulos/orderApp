@@ -10,4 +10,6 @@ public interface RatingService {
 
 	ResponsePaginationObject<RatingDto> getRatingsByRestaurantId(long restaurantId, int pageNo, int pageSize,
 			String sortBy, String sortDir);
+
+	RatingDto updateRating(long restaurantId, long ratingId, RatingDto reqBody);
 }

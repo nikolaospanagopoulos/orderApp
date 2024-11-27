@@ -82,9 +82,7 @@ public class DishServiceImpl implements DishService {
 		foundDish.setDescription(reqBody.getDescription());
 		foundDish.setName(reqBody.getName());
 		foundDish.setPrice(reqBody.getPrice());
-		System.out.println(foundDish);
 		Dish updated = dishRepository.save(foundDish);
-		System.out.println(updated);
 		return modelMapper.map(updated, DishDto.class);
 	}
 
