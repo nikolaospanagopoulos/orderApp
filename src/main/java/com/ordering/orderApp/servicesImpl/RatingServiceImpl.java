@@ -1,6 +1,7 @@
 package com.ordering.orderApp.servicesImpl;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -19,6 +20,8 @@ import com.ordering.orderApp.payload.entities.RatingResponsePaginationObject;
 import com.ordering.orderApp.repositories.RatingRepository;
 import com.ordering.orderApp.repositories.RestaurantRepository;
 import com.ordering.orderApp.services.RatingService;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class RatingServiceImpl implements RatingService {
@@ -47,32 +50,32 @@ public class RatingServiceImpl implements RatingService {
 		if (!foundRating.getRestaurant().getId().equals(foundRestaurant.getId())) {
 			throw new ResourceNotFoundException("Rating", "id", Long.toString(ratingId));
 		}
+		double oldRatingValue = foundRating.getRatingValue();
 		foundRating.setRatingValue(reqBody.getRatingValue());
 		foundRating.setReview(reqBody.getReview());
 		Rating updated = ratingRepository.save(foundRating);
-//		foundRestaurant.getRatings().stream().forEach(r -> System.out.println(r.getRatingValue() + " "));
-		double sum = foundRestaurant.getRatings().stream().map(r -> r.getRatingValue()).reduce(0.0, (a, b) -> a + b);
-		double ans = Math.round(sum / (foundRestaurant.getRatings().size()) * 100) / 100.0;
-		foundRestaurant.setAverageRating(ans);
+
+		foundRestaurant.updateRating(oldRatingValue, reqBody.getRatingValue());
 		restaurantRepository.save(foundRestaurant);
 		return modelMapper.map(updated, RatingDto.class);
 	}
 
 	@Override
+	@Transactional
 	public RatingDto createRating(long restaurantId, RatingDto toRate) {
 		Restaurant found = findRestaurantById(restaurantId);
 		Rating toSave = modelMapper.map(toRate, Rating.class);
 		toSave.setRestaurant(found);
+
+		Rating saved = ratingRepository.save(toSave);
+
+		found.getRatings().add(toSave);
+		found.addRating(toRate.getRatingValue());
 		// TODO: later make each rating unique for each user
-		double sum = (found.getRatings().stream().map(r -> r.getRatingValue()).reduce(0.0, (a, b) -> a + b)
-				+ toSave.getRatingValue());
 
-		double ans = Math.round(sum / (found.getRatings().size() + 1) * 100) / 100.0;
-		found.setAverageRating(ans);
-
-		ratingRepository.save(toSave);
 		restaurantRepository.save(found);
-		return modelMapper.map(toSave, RatingDto.class);
+
+		return modelMapper.map(saved, RatingDto.class);
 	}
 
 	private Rating getRatingEntityById(long ratingId) {
@@ -105,6 +108,20 @@ public class RatingServiceImpl implements RatingService {
 			throw new ResourceNotFoundException("Rating", "id", Long.toString(ratingId));
 		}
 		return modelMapper.map(foundRating, RatingDto.class);
+	}
+
+	@Override
+	@Transactional
+	public void deleteRating(long restaurantId, long ratingId) {
+		Restaurant found = findRestaurantById(restaurantId);
+		Rating foundRating = getRatingEntityById(ratingId);
+		if (!foundRating.getRestaurant().getId().equals(found.getId())) {
+			throw new ResourceNotFoundException("Rating", "id", Long.toString(ratingId));
+		}
+		found.deleteRating(foundRating.getRatingValue());
+		restaurantRepository.save(found);
+		ratingRepository.delete(foundRating);
+
 	}
 
 }

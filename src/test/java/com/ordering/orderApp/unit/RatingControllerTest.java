@@ -1,5 +1,6 @@
 package com.ordering.orderApp.unit;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -57,6 +59,18 @@ public class RatingControllerTest {
 		for (int i = 0; i < ids.size() - 1; i++) {
 			assertTrue(ids.get(i) > ids.get(i + 1), "Ratings are not sorted by ID in descending order");
 		}
+	}
+
+	@Test
+	public void testUpdateRating() throws Exception {
+		this.mockMvc
+				.perform(put("/api/restaurants/" + idOfRestaurant + "/ratings/" + idOfRating)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("{\n" + "    \"ratingValue\":\"3.5\",\n" + "    \"review\":\"test review\"\n" + "}"))
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.data.ratingValue").value(is(3.5)))
+				.andExpect(jsonPath("$.data.review").value(is("test review"))).andReturn();
+
 	}
 
 	@Test

@@ -12,4 +12,6 @@ public interface RatingService {
 			String sortBy, String sortDir);
 
 	RatingDto updateRating(long restaurantId, long ratingId, RatingDto reqBody);
+
+	void deleteRating(long restaurantId, long ratingId);
 }

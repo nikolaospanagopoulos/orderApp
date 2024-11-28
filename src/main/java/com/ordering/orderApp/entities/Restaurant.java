@@ -24,9 +24,52 @@ public class Restaurant {
 	private String address;
 	private String imageUrl;
 	private double averageRating;
+	private double totalRatingValue = 0.0;
+	private int ratingCount = 0;
 
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Dish> dishes;
+
+	public void addRating(double ratingValue) {
+		this.totalRatingValue += ratingValue;
+		this.ratingCount++;
+		updateAverageRating();
+	}
+
+	public void deleteRating(double ratingValue) {
+		this.totalRatingValue -= ratingValue;
+		this.ratingCount--;
+		updateAverageRating();
+	}
+
+	public void updateRating(double oldRatingValue, double newRatingValue) {
+		this.totalRatingValue += (newRatingValue - oldRatingValue);
+		updateAverageRating();
+	}
+
+	private void updateAverageRating() {
+		if (this.ratingCount > 0) {
+			this.averageRating = Math.round((this.totalRatingValue / this.ratingCount) * 100) / 100.0;
+		} else {
+			this.averageRating = 0.0;
+		}
+	}
+
+	public double getTotalRatingValue() {
+		return totalRatingValue;
+	}
+
+	public void setTotalRatingValue(double totalRatingValue) {
+		this.totalRatingValue = totalRatingValue;
+	}
+
+	public int getRatingCount() {
+		return ratingCount;
+	}
+
+	public void setRatingCount(int ratingCount) {
+		this.ratingCount = ratingCount;
+	}
 
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Rating> ratings;
