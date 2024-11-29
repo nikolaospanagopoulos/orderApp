@@ -1,5 +1,6 @@
 package com.ordering.orderApp.unit;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -71,6 +72,12 @@ public class RatingControllerTest {
 				.andExpect(jsonPath("$.data.ratingValue").value(is(3.5)))
 				.andExpect(jsonPath("$.data.review").value(is("test review"))).andReturn();
 
+	}
+
+	@Test
+	public void testDeleteRating() throws Exception {
+		this.mockMvc.perform(delete("/api/restaurants/" + idOfRestaurant + "/ratings/" + idOfRating))
+				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 	}
 
 	@Test
