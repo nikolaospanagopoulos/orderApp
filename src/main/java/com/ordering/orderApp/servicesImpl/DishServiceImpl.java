@@ -45,7 +45,7 @@ public class DishServiceImpl implements DishService {
 	public DishDto createDish(long restaurantId, DishDto toCreate) {
 		Restaurant foundRestaurant = findRestaurantById(restaurantId);
 
-		if (dishRepository.existsByName(toCreate.getName())) {
+		if (dishRepository.existsByNameAndRestaurantId(toCreate.getName(), foundRestaurant.getId())) {
 			throw new ResourceAlreadyExistsException("Dish", "name", toCreate.getName());
 		}
 		Dish newDish = modelMapper.map(toCreate, Dish.class);

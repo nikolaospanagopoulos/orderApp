@@ -1,6 +1,7 @@
 package com.ordering.orderApp.entities;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -78,6 +79,22 @@ public class Dish {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, restaurant != null ? restaurant.getId() : null);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		Dish other = (Dish) obj;
+		return Objects.equals(name, other.name) && Objects.equals(restaurant != null ? restaurant.getId() : null,
+				other.restaurant != null ? other.restaurant.getId() : null);
 	}
 
 	public String getName() {
