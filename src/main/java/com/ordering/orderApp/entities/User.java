@@ -47,6 +47,10 @@ public class User {
 		roles = new HashSet<Role>();
 	}
 
+	public User() {
+		super();
+	}
+
 	public Set<Role> getRoles() {
 		return roles;
 	}
