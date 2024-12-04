@@ -2,6 +2,7 @@ package com.ordering.orderApp.unit;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 import java.util.UUID;
 
@@ -16,7 +17,8 @@ public class TestUtilis {
 	public static long createRestaurant(MockMvc mockMvc) throws Exception {
 		String uniqueName = "test_name_" + UUID.randomUUID();
 		MvcResult result = mockMvc
-				.perform(post("/api/restaurants").contentType(MediaType.APPLICATION_JSON)
+				.perform(post("/api/restaurants").with(user("admin").roles("ADMIN"))
+						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\n" + "    \"name\":\"test name " + uniqueName + "\",\n"
 								+ "    \"description\":\"test description\",\n" + "    \"address\":\"test address\",\n"
 								+ "    \"imageUrl\":\"test img\"\n" + "}")

@@ -2,6 +2,7 @@ package com.ordering.orderApp.unit;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +48,8 @@ public class RestaurantControllerTest {
 	public void testUpdateRestaurant() throws Exception {
 		String uniqueName = "test_name_" + UUID.randomUUID();
 		MvcResult result = this.mockMvc
-				.perform(put("/api/restaurants/" + idOfRestaurant).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/restaurants/" + idOfRestaurant).with(user("admin").roles("ADMIN"))
+						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\n" + "    \"name\":\"test name " + uniqueName + "\",\n"
 								+ "    \"description\":\"test description update\",\n"
 								+ "    \"address\":\"test address\",\n" + "    \"imageUrl\":\"test img\"\n" + "}")
@@ -59,7 +61,8 @@ public class RestaurantControllerTest {
 
 	@Test
 	public void testDeleteRestaurant() throws Exception {
-		this.mockMvc.perform(delete("/api/restaurants/" + idOfRestaurant)).andExpect(status().isOk()).andDo(print());
+		this.mockMvc.perform(delete("/api/restaurants/" + idOfRestaurant).with(user("admin").roles("ADMIN")))
+				.andExpect(status().isOk()).andDo(print());
 	}
 
 	@BeforeEach

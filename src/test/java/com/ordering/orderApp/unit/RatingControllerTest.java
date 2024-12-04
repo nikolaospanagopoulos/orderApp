@@ -1,5 +1,6 @@
 package com.ordering.orderApp.unit;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -66,7 +67,7 @@ public class RatingControllerTest {
 	public void testUpdateRating() throws Exception {
 		this.mockMvc
 				.perform(put("/api/restaurants/" + idOfRestaurant + "/ratings/" + idOfRating)
-						.contentType(MediaType.APPLICATION_JSON)
+						.with(user("admin").roles("ADMIN")).contentType(MediaType.APPLICATION_JSON)
 						.content("{\n" + "    \"ratingValue\":\"3.5\",\n" + "    \"review\":\"test review\"\n" + "}"))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.data.ratingValue").value(is(3.5)))
@@ -76,7 +77,9 @@ public class RatingControllerTest {
 
 	@Test
 	public void testDeleteRating() throws Exception {
-		this.mockMvc.perform(delete("/api/restaurants/" + idOfRestaurant + "/ratings/" + idOfRating))
+		this.mockMvc
+				.perform(delete("/api/restaurants/" + idOfRestaurant + "/ratings/" + idOfRating)
+						.with(user("admin").roles("ADMIN")))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 	}
 
@@ -89,9 +92,11 @@ public class RatingControllerTest {
 
 	private void createRating() throws Exception {
 		MvcResult mvcResult = this.mockMvc
-				.perform(post("/api/restaurants/" + idOfRestaurant + "/ratings").contentType(MediaType.APPLICATION_JSON)
-						.content("{\n" + "    \"ratingValue\":\"5\",\n" + "    \"review\":\"test review\"\n" + "}")
-						.characterEncoding("utf-8"))
+				.perform(
+						post("/api/restaurants/" + idOfRestaurant + "/ratings").with(user("admin").roles("ADMIN"))
+								.contentType(MediaType.APPLICATION_JSON).content("{\n" + "    \"ratingValue\":\"5\",\n"
+										+ "    \"review\":\"test review\"\n" + "}")
+								.characterEncoding("utf-8"))
 				.andExpect(status().isCreated()).andReturn();
 
 		String responseContent = mvcResult.getResponse().getContentAsString();

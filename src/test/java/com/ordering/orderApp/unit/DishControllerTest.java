@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -48,7 +49,8 @@ public class DishControllerTest {
 
 	@Test
 	public void testDeleteDish() throws Exception {
-		this.mockMvc.perform(delete("/api/restaurants/" + idOfRestaurant + "/dishes/" + idOfDish))
+		this.mockMvc.perform(
+				delete("/api/restaurants/" + idOfRestaurant + "/dishes/" + idOfDish).with(user("admin").roles("ADMIN")))
 				.andExpect(status().isOk()).andDo(print());
 	}
 
@@ -88,7 +90,7 @@ public class DishControllerTest {
 		String uniqueName = "test_name_" + UUID.randomUUID();
 		this.mockMvc
 				.perform(put("/api/restaurants/" + idOfRestaurant + "/dishes/" + idOfDish)
-						.contentType(MediaType.APPLICATION_JSON)
+						.with(user("admin").roles("ADMIN")).contentType(MediaType.APPLICATION_JSON)
 						.content("{\n" + "    \"name\":\"test dish name " + uniqueName + "updated\",\n"
 								+ "    \"description\":\"test dish description updated\",\n" + "    \"price\":10.0,\n"
 								+ "    \"createdDate\": \"2024-03-15\"\n" + "}"))
@@ -102,7 +104,8 @@ public class DishControllerTest {
 	private void testCreateDish() throws Exception {
 		String uniqueName = "test_name_" + UUID.randomUUID();
 		MvcResult mvcResult = this.mockMvc
-				.perform(post("/api/restaurants/" + idOfRestaurant + "/dishes").contentType(MediaType.APPLICATION_JSON)
+				.perform(post("/api/restaurants/" + idOfRestaurant + "/dishes").with(user("admin").roles("ADMIN"))
+						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\n" + "    \"name\":\"test dish name " + uniqueName + "\",\n"
 								+ "    \"description\":\"test dish description\",\n" + "    \"price\":10.0,\n"
 								+ "    \"createdDate\": \"2024-03-15\"\n" + "}")
