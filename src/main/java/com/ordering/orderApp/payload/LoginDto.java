@@ -1,21 +1,21 @@
 package com.ordering.orderApp.payload;
 
 public class LoginDto {
-	private String email;
+	private String usernameOrEmail;
 	private String password;
 
 	public LoginDto(String email, String password) {
 		super();
-		this.email = email;
+		this.usernameOrEmail = email;
 		this.password = password;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getUsernameOrEmail() {
+		return usernameOrEmail;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUsernameOrEmail(String usernameOrEmail) {
+		this.usernameOrEmail = usernameOrEmail;
 	}
 
 	public String getPassword() {

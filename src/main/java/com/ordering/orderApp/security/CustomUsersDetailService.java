@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.ordering.orderApp.entities.User;
+import com.ordering.orderApp.payload.entities.CustomUserDetails;
 import com.ordering.orderApp.repositories.UserRepository;
 
 @Service
@@ -30,7 +31,7 @@ public class CustomUsersDetailService implements UserDetailsService {
 				.orElseThrow(() -> new InternalAuthenticationServiceException("Authentication failed"));
 		Set<GrantedAuthority> authorities = foundUser.getRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
-		return new org.springframework.security.core.userdetails.User(foundUser.getUsername(), foundUser.getPassword(),
+		return new CustomUserDetails(foundUser.getUsername(), foundUser.getPassword(), foundUser.getEmail(),
 				authorities);
 	}
 
