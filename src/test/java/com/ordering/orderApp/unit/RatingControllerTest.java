@@ -2,7 +2,6 @@ package com.ordering.orderApp.unit;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,13 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
+import com.ordering.orderApp.payload.entities.CustomUserDetails;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -67,7 +67,9 @@ public class RatingControllerTest {
 	public void testUpdateRating() throws Exception {
 		this.mockMvc
 				.perform(put("/api/restaurants/" + idOfRestaurant + "/ratings/" + idOfRating)
-						.with(user("admin").roles("ADMIN")).contentType(MediaType.APPLICATION_JSON)
+						.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
+								List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User")))
+						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\n" + "    \"ratingValue\":\"3.5\",\n" + "    \"review\":\"test review\"\n" + "}"))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
 				.andExpect(jsonPath("$.data.ratingValue").value(is(3.5)))
@@ -79,7 +81,8 @@ public class RatingControllerTest {
 	public void testDeleteRating() throws Exception {
 		this.mockMvc
 				.perform(delete("/api/restaurants/" + idOfRestaurant + "/ratings/" + idOfRating)
-						.with(user("admin").roles("ADMIN")))
+						.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
+								List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User"))))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
 	}
 
@@ -91,13 +94,12 @@ public class RatingControllerTest {
 	}
 
 	private void createRating() throws Exception {
-		MvcResult mvcResult = this.mockMvc
-				.perform(
-						post("/api/restaurants/" + idOfRestaurant + "/ratings").with(user("admin").roles("ADMIN"))
-								.contentType(MediaType.APPLICATION_JSON).content("{\n" + "    \"ratingValue\":\"5\",\n"
-										+ "    \"review\":\"test review\"\n" + "}")
-								.characterEncoding("utf-8"))
-				.andExpect(status().isCreated()).andReturn();
+		MvcResult mvcResult = this.mockMvc.perform(post("/api/restaurants/" + idOfRestaurant + "/ratings")
+				.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
+						List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User")))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\n" + "    \"ratingValue\":\"5\",\n" + "    \"review\":\"test review\"\n" + "}")
+				.characterEncoding("utf-8")).andExpect(status().isCreated()).andReturn();
 
 		String responseContent = mvcResult.getResponse().getContentAsString();
 

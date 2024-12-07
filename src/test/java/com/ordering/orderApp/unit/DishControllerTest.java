@@ -23,12 +23,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ordering.orderApp.payload.entities.CustomUserDetails;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,8 +51,10 @@ public class DishControllerTest {
 
 	@Test
 	public void testDeleteDish() throws Exception {
-		this.mockMvc.perform(
-				delete("/api/restaurants/" + idOfRestaurant + "/dishes/" + idOfDish).with(user("admin").roles("ADMIN")))
+		this.mockMvc
+				.perform(delete("/api/restaurants/" + idOfRestaurant + "/dishes/" + idOfDish)
+						.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
+								List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User"))))
 				.andExpect(status().isOk()).andDo(print());
 	}
 
@@ -90,7 +94,9 @@ public class DishControllerTest {
 		String uniqueName = "test_name_" + UUID.randomUUID();
 		this.mockMvc
 				.perform(put("/api/restaurants/" + idOfRestaurant + "/dishes/" + idOfDish)
-						.with(user("admin").roles("ADMIN")).contentType(MediaType.APPLICATION_JSON)
+						.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
+								List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User")))
+						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\n" + "    \"name\":\"test dish name " + uniqueName + "updated\",\n"
 								+ "    \"description\":\"test dish description updated\",\n" + "    \"price\":10.0,\n"
 								+ "    \"createdDate\": \"2024-03-15\"\n" + "}"))
@@ -104,7 +110,9 @@ public class DishControllerTest {
 	private void testCreateDish() throws Exception {
 		String uniqueName = "test_name_" + UUID.randomUUID();
 		MvcResult mvcResult = this.mockMvc
-				.perform(post("/api/restaurants/" + idOfRestaurant + "/dishes").with(user("admin").roles("ADMIN"))
+				.perform(post("/api/restaurants/" + idOfRestaurant + "/dishes")
+						.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
+								List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User")))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\n" + "    \"name\":\"test dish name " + uniqueName + "\",\n"
 								+ "    \"description\":\"test dish description\",\n" + "    \"price\":10.0,\n"

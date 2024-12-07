@@ -3,6 +3,9 @@ package com.ordering.orderApp.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ordering.orderApp.payload.ApiResponse;
 import com.ordering.orderApp.payload.ResponsePaginationObject;
 import com.ordering.orderApp.payload.RestaurantDto;
+import com.ordering.orderApp.payload.entities.CustomUserDetails;
 import com.ordering.orderApp.services.RestaurantService;
 import com.ordering.orderApp.utilis.Constants.ApplicationConstants;
 
@@ -51,8 +55,16 @@ public class RestaurantController {
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
-	public ResponseEntity<RestaurantDto> createRestaurant(@RequestBody RestaurantDto toCreate) {
+	public ResponseEntity<RestaurantDto> createRestaurant(@RequestBody RestaurantDto toCreate,
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
 		RestaurantDto created = restaurantService.createRestaurant(toCreate);
+		String loggedInUsername = userDetails.getUsername();
+		System.out.println("Logged-in user: " + loggedInUsername + " " + userDetails.getEmail());
+		userDetails.getAuthorities().forEach(a -> System.out.println(a.getAuthority()));
+
+		// You can now use loggedInUsername in your business logic
+		System.out.println("Logged-in user: " + loggedInUsername + " " + userDetails.getEmail());
+		userDetails.getAuthorities().stream().forEach(a -> System.out.println(a.getAuthority()));
 		return new ResponseEntity<>(created, HttpStatus.CREATED);
 	}
 

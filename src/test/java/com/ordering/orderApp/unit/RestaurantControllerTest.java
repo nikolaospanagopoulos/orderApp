@@ -9,17 +9,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
 import java.util.UUID;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ordering.orderApp.payload.entities.CustomUserDetails;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.hamcrest.Matchers.is;
 
@@ -48,7 +53,9 @@ public class RestaurantControllerTest {
 	public void testUpdateRestaurant() throws Exception {
 		String uniqueName = "test_name_" + UUID.randomUUID();
 		MvcResult result = this.mockMvc
-				.perform(put("/api/restaurants/" + idOfRestaurant).with(user("admin").roles("ADMIN"))
+				.perform(put("/api/restaurants/" + idOfRestaurant)
+						.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
+								List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User")))
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\n" + "    \"name\":\"test name " + uniqueName + "\",\n"
 								+ "    \"description\":\"test description update\",\n"
@@ -61,7 +68,10 @@ public class RestaurantControllerTest {
 
 	@Test
 	public void testDeleteRestaurant() throws Exception {
-		this.mockMvc.perform(delete("/api/restaurants/" + idOfRestaurant).with(user("admin").roles("ADMIN")))
+		this.mockMvc
+				.perform(delete("/api/restaurants/" + idOfRestaurant)
+						.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
+								List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User"))))
 				.andExpect(status().isOk()).andDo(print());
 	}
 
