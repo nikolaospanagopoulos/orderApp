@@ -32,7 +32,7 @@ public class CustomUsersDetailService implements UserDetailsService {
 		Set<GrantedAuthority> authorities = foundUser.getRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toSet());
 		return new CustomUserDetails(foundUser.getUsername(), foundUser.getPassword(), foundUser.getEmail(),
-				authorities);
+				authorities, foundUser.getFirstName(), foundUser.getLastName());
 	}
 
 }

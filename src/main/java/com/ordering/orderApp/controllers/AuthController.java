@@ -1,13 +1,7 @@
 package com.ordering.orderApp.controllers;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +12,7 @@ import com.ordering.orderApp.payload.ApiResponse;
 import com.ordering.orderApp.payload.JwtResponseDto;
 import com.ordering.orderApp.payload.LoginDto;
 import com.ordering.orderApp.payload.RegisterDto;
-import com.ordering.orderApp.payload.entities.CustomUserDetails;
+import com.ordering.orderApp.payload.UserDetailsDto;
 import com.ordering.orderApp.services.AuthService;
 
 import jakarta.servlet.http.Cookie;
@@ -43,23 +37,10 @@ public class AuthController {
 	}
 
 	@GetMapping("/info")
-	public ResponseEntity<Object> getUserInfo() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		if (authentication == null || !authentication.isAuthenticated()) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
-		}
-
-		Object principal = authentication.getPrincipal();
-
-		if (principal instanceof CustomUserDetails) {
-			CustomUserDetails userDetails = (CustomUserDetails) principal;
-			return ResponseEntity.ok(
-					Map.of("username", userDetails.getUsername(), "email", userDetails.getEmail(), "roles", userDetails
-							.getAuthorities().stream().map(auth -> auth.getAuthority()).collect(Collectors.toList())));
-		} else {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("User details not found");
-		}
+	public ResponseEntity<ApiResponse<UserDetailsDto>> getUserInfo() {
+		UserDetailsDto userDetails = authService.getUserInfo();
+		ApiResponse<UserDetailsDto> res = new ApiResponse<>(userDetails);
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	@PostMapping("/login")

@@ -11,14 +11,18 @@ public class CustomUserDetails implements UserDetails {
 	private String username;
 	private String password;
 	private String email;
+	private String firstName;
+	private String lastName;
 	private Collection<? extends GrantedAuthority> authorities;
 
 	public CustomUserDetails(String username, String password, String email,
-			Collection<? extends GrantedAuthority> authorities) {
+			Collection<? extends GrantedAuthority> authorities, String firstName, String lastName) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
 		this.authorities = authorities;
+		this.firstName = firstName;
+		this.lastName = lastName;
 	}
 
 	public String getEmail() {
@@ -53,6 +57,22 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public boolean isCredentialsNonExpired() {
 		return true;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	@Override
