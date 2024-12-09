@@ -1,7 +1,6 @@
 package com.ordering.orderApp.unit;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -20,9 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ordering.orderApp.payload.entities.CustomUserDetails;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -52,7 +48,7 @@ public class RestaurantControllerTest {
 	@Test
 	public void testUpdateRestaurant() throws Exception {
 		String uniqueName = "test_name_" + UUID.randomUUID();
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(put("/api/restaurants/" + idOfRestaurant)
 						.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
 								List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User")))

@@ -58,9 +58,11 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public String register(RegisterDto registerDto) {
-		if (userRepository.existsByEmail(registerDto.getEmail())) {
-			throw new ResourceAlreadyExistsException("User already exists with email " + registerDto.getEmail());
+		if (userRepository.existsByEmail(registerDto.getEmail())
+				|| userRepository.existsByUsername(registerDto.getUsername())) {
+			throw new ResourceAlreadyExistsException("User already exists");
 		}
+
 		User newUser = modelMapper.map(registerDto, User.class);
 		newUser.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 		System.out.println(newUser);

@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,14 +52,14 @@ public class RestaurantController {
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
+
 	@PostMapping
-	public ResponseEntity<RestaurantDto> createRestaurant(@RequestBody RestaurantDto toCreate,
-			@AuthenticationPrincipal CustomUserDetails userDetails) {
+	public ResponseEntity<RestaurantDto> createRestaurant(@RequestBody RestaurantDto toCreate) {
 		RestaurantDto created = restaurantService.createRestaurant(toCreate);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 		String loggedInUsername = userDetails.getUsername();
-		System.out.println("Logged-in user: " + loggedInUsername + " " + userDetails.getEmail());
-		userDetails.getAuthorities().forEach(a -> System.out.println(a.getAuthority()));
 
 		// You can now use loggedInUsername in your business logic
 		System.out.println("Logged-in user: " + loggedInUsername + " " + userDetails.getEmail());

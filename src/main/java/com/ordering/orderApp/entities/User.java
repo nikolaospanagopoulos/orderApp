@@ -1,6 +1,7 @@
 package com.ordering.orderApp.entities;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -34,9 +35,37 @@ public class User {
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 	private Set<Role> roles;
+	@ManyToMany
+	@JoinTable(name = "user_restaurants", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "restaurant_id", referencedColumnName = "id"))
+	private Set<Restaurant> restaurants;
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(email, id, username);
+	}
+
+	public void addRestaurant(Restaurant restaurant) {
+		if (restaurants == null) {
+			restaurants = new HashSet<>();
+		}
+		restaurants.add(restaurant);
+		restaurant.getOwners().add(this); // Maintain bi-directional consistency
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		return Objects.equals(email, other.email) && id == other.id && Objects.equals(username, other.username);
+	}
 
 	public User(long id, String firstName, String lastName, String username, String password, String email,
-			Set<Role> roles) {
+			Set<Role> roles, Set<Restaurant> restaurants) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -44,7 +73,16 @@ public class User {
 		this.username = username;
 		this.password = password;
 		this.email = email;
-		roles = new HashSet<Role>();
+		roles = new HashSet<>();
+		restaurants = new HashSet<>();
+	}
+
+	public Set<Restaurant> getRestaurants() {
+		return restaurants;
+	}
+
+	public void setRestaurants(Set<Restaurant> restaurants) {
+		this.restaurants = restaurants;
 	}
 
 	public User() {
@@ -105,6 +143,13 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", username=" + username
+				+ ", password=" + password + ", email=" + email + ", roles=" + roles + ", restaurants=" + restaurants
+				+ "]";
 	}
 
 }

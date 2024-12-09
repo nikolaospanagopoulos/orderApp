@@ -1,5 +1,7 @@
 package com.ordering.orderApp.payload;
 
+import java.util.Set;
+
 public class RestaurantDto {
 	private Long id;
 	private String name;
@@ -7,9 +9,10 @@ public class RestaurantDto {
 	private String address;
 	private String imageUrl;
 	private double averageRating;
+	Set<OwnerDto> owners;
 
 	public RestaurantDto(Long id, String name, String description, String address, String imageUrl,
-			double averageRating) {
+			double averageRating, Set<OwnerDto> owners) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -17,6 +20,7 @@ public class RestaurantDto {
 		this.address = address;
 		this.imageUrl = imageUrl;
 		this.averageRating = averageRating;
+		this.owners = owners;
 	}
 
 	public double getAverageRating() {
@@ -69,6 +73,14 @@ public class RestaurantDto {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public Set<OwnerDto> getOwners() {
+		return owners;
+	}
+
+	public void setOwners(Set<OwnerDto> owners) {
+		this.owners = owners;
 	}
 
 }

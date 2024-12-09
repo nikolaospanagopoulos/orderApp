@@ -1,6 +1,7 @@
 package com.ordering.orderApp.entities;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -9,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -16,6 +18,23 @@ import jakarta.persistence.UniqueConstraint;
 @Entity
 @Table(name = "restaurants", uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
 public class Restaurant {
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Restaurant other = (Restaurant) obj;
+		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -26,6 +45,8 @@ public class Restaurant {
 	private double averageRating;
 	private double totalRatingValue = 0.0;
 	private int ratingCount = 0;
+	@ManyToMany(mappedBy = "restaurants", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<User> owners;
 
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Dish> dishes;
@@ -34,6 +55,14 @@ public class Restaurant {
 		this.totalRatingValue += ratingValue;
 		this.ratingCount++;
 		updateAverageRating();
+	}
+
+	public void addOwner(User owner) {
+		if (owners == null) {
+			owners = new HashSet<>();
+		}
+		owners.add(owner);
+		owner.getRestaurants().add(this); // Maintain bi-directional consistency
 	}
 
 	public void deleteRating(double ratingValue) {
@@ -83,7 +112,7 @@ public class Restaurant {
 	}
 
 	public Restaurant(Long id, String name, String description, String address, String imageUrl, Set<Dish> dishes,
-			Set<Rating> ratings, double averageRating) {
+			Set<Rating> ratings, double averageRating, Set<User> owners) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -93,6 +122,7 @@ public class Restaurant {
 		this.averageRating = 0.0;
 		this.dishes = new HashSet<Dish>();
 		this.ratings = new HashSet<Rating>();
+		this.owners = new HashSet<User>();
 	}
 
 	public double getAverageRating() {
@@ -153,6 +183,14 @@ public class Restaurant {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public Set<User> getOwners() {
+		return owners;
+	}
+
+	public void setOwners(Set<User> owners) {
+		this.owners = owners;
 	}
 
 }

@@ -1,0 +1,6 @@
+1.create roles api
+2.handle owners and restaurants
+3.handle api req checking
+4.handle shopping cart
+5.payments
+6.correct response for registration 
