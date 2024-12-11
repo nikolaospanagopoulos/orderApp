@@ -21,6 +21,8 @@ import com.ordering.orderApp.repositories.DishRepository;
 import com.ordering.orderApp.repositories.RestaurantRepository;
 import com.ordering.orderApp.services.DishService;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class DishServiceImpl implements DishService {
 
@@ -42,6 +44,7 @@ public class DishServiceImpl implements DishService {
 	}
 
 	@Override
+	@Transactional
 	public DishDto createDish(long restaurantId, DishDto toCreate) {
 		Restaurant foundRestaurant = findRestaurantById(restaurantId);
 

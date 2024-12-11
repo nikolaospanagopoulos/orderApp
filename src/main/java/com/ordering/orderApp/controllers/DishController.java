@@ -53,10 +53,11 @@ public class DishController {
 	}
 
 	@PostMapping("/restaurants/{restaurantId}/dishes")
-	public ResponseEntity<DishDto> createDish(@RequestBody DishDto toCreate,
+	public ResponseEntity<ApiResponse<DishDto>> createDish(@RequestBody DishDto toCreate,
 			@PathVariable(value = "restaurantId") long restaurantId) {
 		DishDto created = dishService.createDish(restaurantId, toCreate);
-		return new ResponseEntity<>(created, HttpStatus.CREATED);
+		ApiResponse<DishDto> res = new ApiResponse<>(created);
+		return new ResponseEntity<>(res, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/restaurants/{restaurantId}/dishes")

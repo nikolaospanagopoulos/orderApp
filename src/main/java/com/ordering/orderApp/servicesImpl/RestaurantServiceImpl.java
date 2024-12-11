@@ -48,6 +48,8 @@ public class RestaurantServiceImpl implements RestaurantService {
 				return user;
 			}).collect(Collectors.toSet());
 			restaurant.setOwners(owners);
+		} else {
+			restaurant.setOwners(new HashSet<User>());
 		}
 
 		return restaurant;
@@ -66,17 +68,17 @@ public class RestaurantServiceImpl implements RestaurantService {
 		}
 
 		// TODO: check whole implementation!
-
-		Set<User> owners = toCreate.getOwners().stream().map(o -> {
-			return userRepository.findByEmail(o.getEmail())
-					.orElseThrow(() -> new ResourceNotFoundException("User", "email", o.getEmail()));
-		}).collect(Collectors.toSet());
-
-		System.out.println(owners);
-
 		Restaurant toSave = mapToRestaurantEntity(toCreate);
+		if (toCreate.getOwners() != null) {
+			Set<User> owners = toCreate.getOwners().stream().map(o -> {
+				return userRepository.findByEmail(o.getEmail())
+						.orElseThrow(() -> new ResourceNotFoundException("User", "email", o.getEmail()));
+			}).collect(Collectors.toSet());
 
-		owners.stream().forEach(o -> toSave.addOwner(o));
+			System.out.println(owners);
+
+			toSave.addOwner(owners);
+		}
 
 		Restaurant saved = restaurantRepository.save(toSave);
 
@@ -118,6 +120,15 @@ public class RestaurantServiceImpl implements RestaurantService {
 		found.setDescription(updated.getDescription());
 		found.setImageUrl(updated.getImageUrl());
 		found.setName(updated.getName());
+		if (updated.getOwners() != null) {
+			Set<User> owners = updated.getOwners().stream().map(o -> {
+				return userRepository.findByEmail(o.getEmail())
+						.orElseThrow(() -> new ResourceNotFoundException("User", "email", o.getEmail()));
+			}).collect(Collectors.toSet());
+
+			System.out.println(owners);
+			found.addOwner(owners);
+		}
 		Restaurant savedRes = restaurantRepository.save(found);
 		return mapToRestaurantDto(savedRes);
 	}

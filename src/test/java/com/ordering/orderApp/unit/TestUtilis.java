@@ -32,7 +32,7 @@ public class TestUtilis {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String responseContent = result.getResponse().getContentAsString();
 		JsonNode responseJSON = objectMapper.readTree(responseContent);
-		long restaurantId = responseJSON.get("id").asLong();
+		long restaurantId = responseJSON.at("/data/id").asLong();
 		return restaurantId;
 	}
 }

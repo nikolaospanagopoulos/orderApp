@@ -57,12 +57,18 @@ public class Restaurant {
 		updateAverageRating();
 	}
 
-	public void addOwner(User owner) {
+	public void addOwner(Set<User> ownersToAd) {
 		if (owners == null) {
 			owners = new HashSet<>();
 		}
-		owners.add(owner);
-		owner.getRestaurants().add(this); // Maintain bi-directional consistency
+		if (!owners.isEmpty()) {
+			owners.clear();
+		}
+
+		ownersToAd.stream().forEach(o -> owners.add(o));
+
+		ownersToAd.stream().forEach(o -> o.getRestaurants().add(this));
+		// Maintain bi-directional consistency
 	}
 
 	public void deleteRating(double ratingValue) {

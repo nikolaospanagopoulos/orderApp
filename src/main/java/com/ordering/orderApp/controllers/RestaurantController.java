@@ -55,8 +55,9 @@ public class RestaurantController {
 	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 
 	@PostMapping
-	public ResponseEntity<RestaurantDto> createRestaurant(@RequestBody RestaurantDto toCreate) {
+	public ResponseEntity<ApiResponse<RestaurantDto>> createRestaurant(@RequestBody RestaurantDto toCreate) {
 		RestaurantDto created = restaurantService.createRestaurant(toCreate);
+		ApiResponse<RestaurantDto> res = new ApiResponse<RestaurantDto>(created);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 		String loggedInUsername = userDetails.getUsername();
@@ -64,7 +65,7 @@ public class RestaurantController {
 		// You can now use loggedInUsername in your business logic
 		System.out.println("Logged-in user: " + loggedInUsername + " " + userDetails.getEmail());
 		userDetails.getAuthorities().stream().forEach(a -> System.out.println(a.getAuthority()));
-		return new ResponseEntity<>(created, HttpStatus.CREATED);
+		return new ResponseEntity<>(res, HttpStatus.CREATED);
 	}
 
 	@GetMapping

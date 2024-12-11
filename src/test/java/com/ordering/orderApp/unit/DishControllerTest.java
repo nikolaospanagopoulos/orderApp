@@ -122,6 +122,6 @@ public class DishControllerTest {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String responseContent = mvcResult.getResponse().getContentAsString();
 		JsonNode responseJson = objectMapper.readTree(responseContent);
-		idOfDish = responseJson.get("id").asLong();
+		idOfDish = responseJson.at("/data/id").asLong();
 	}
 }
