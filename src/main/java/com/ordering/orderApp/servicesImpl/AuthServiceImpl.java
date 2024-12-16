@@ -2,6 +2,7 @@ package com.ordering.orderApp.servicesImpl;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -18,6 +19,7 @@ import com.ordering.orderApp.exceptions.ResourceAlreadyExistsException;
 import com.ordering.orderApp.exceptions.UnauthorizedException;
 import com.ordering.orderApp.payload.LoginDto;
 import com.ordering.orderApp.payload.RegisterDto;
+import com.ordering.orderApp.payload.RoleDto;
 import com.ordering.orderApp.payload.UserDetailsDto;
 import com.ordering.orderApp.payload.entities.CustomUserDetails;
 import com.ordering.orderApp.repositories.RoleRepository;
@@ -89,8 +91,11 @@ public class AuthServiceImpl implements AuthService {
 
 		if (principal instanceof CustomUserDetails) {
 			CustomUserDetails userDetails = (CustomUserDetails) principal;
+			Set<String> userRoles = userDetails.getAuthorities().stream().map(a -> a.getAuthority())
+					.collect(Collectors.toSet());
+
 			return new UserDetailsDto(userDetails.getUsername(), userDetails.getFirstName(), userDetails.getLastName(),
-					userDetails.getEmail(), userDetails.getPassword());
+					userDetails.getEmail(), userDetails.getPassword(), userRoles);
 
 		}
 		return null;

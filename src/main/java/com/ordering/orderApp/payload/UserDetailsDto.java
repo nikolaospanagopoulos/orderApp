@@ -1,19 +1,24 @@
 package com.ordering.orderApp.payload;
 
+import java.util.Set;
+
 public class UserDetailsDto {
 	private String userName;
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String passwordHash;
+	private Set<String> roles;
 
-	public UserDetailsDto(String userName, String firstName, String lastName, String email, String passwordHash) {
+	public UserDetailsDto(String userName, String firstName, String lastName, String email, String passwordHash,
+			Set<String> roles) {
 		super();
 		this.userName = userName;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.passwordHash = passwordHash;
+		this.roles = roles;
 	}
 
 	public String getPasswordHash() {
@@ -58,6 +63,14 @@ public class UserDetailsDto {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public Set<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<String> roles) {
+		this.roles = roles;
 	}
 
 }
