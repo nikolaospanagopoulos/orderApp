@@ -10,14 +10,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ordering.orderApp.entities.Restaurant;
 import com.ordering.orderApp.entities.User;
 import com.ordering.orderApp.exceptions.ResourceAlreadyExistsException;
 import com.ordering.orderApp.exceptions.ResourceNotFoundException;
+import com.ordering.orderApp.exceptions.UnauthorizedException;
 import com.ordering.orderApp.payload.ResponsePaginationObject;
 import com.ordering.orderApp.payload.RestaurantDto;
+import com.ordering.orderApp.payload.entities.CustomUserDetails;
 import com.ordering.orderApp.payload.entities.RestaurantResponsePaginationObject;
 import com.ordering.orderApp.repositories.RestaurantRepository;
 import com.ordering.orderApp.repositories.UserRepository;
@@ -114,7 +118,18 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 	@Override
 	public RestaurantDto updateRestaurant(long restaurantId, RestaurantDto updated) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+		String loggedInUsername = userDetails.getUsername();
 		Restaurant found = getRestaurantEntityById(restaurantId);
+
+		boolean userIsOwner = found.getOwners().stream().anyMatch(o -> {
+			return o.getUsername().equals(loggedInUsername) && o.getEmail().equals(userDetails.getEmail());
+		});
+
+		if (!userIsOwner) {
+			throw new UnauthorizedException("Unauthorized");
+		}
 		found.setAddress(updated.getAddress());
 		found.setAverageRating(updated.getAverageRating());
 		found.setDescription(updated.getDescription());
