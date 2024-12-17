@@ -120,14 +120,15 @@ public class RestaurantServiceImpl implements RestaurantService {
 	public RestaurantDto updateRestaurant(long restaurantId, RestaurantDto updated) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+		boolean userIsAdmin = userDetails.getAuthorities().stream()
+				.anyMatch(a -> a.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
 		String loggedInUsername = userDetails.getUsername();
 		Restaurant found = getRestaurantEntityById(restaurantId);
-
 		boolean userIsOwner = found.getOwners().stream().anyMatch(o -> {
 			return o.getUsername().equals(loggedInUsername) && o.getEmail().equals(userDetails.getEmail());
 		});
 
-		if (!userIsOwner) {
+		if (!userIsOwner && !userIsAdmin) {
 			throw new UnauthorizedException("Unauthorized");
 		}
 		found.setAddress(updated.getAddress());
@@ -140,8 +141,6 @@ public class RestaurantServiceImpl implements RestaurantService {
 				return userRepository.findByEmail(o.getEmail())
 						.orElseThrow(() -> new ResourceNotFoundException("User", "email", o.getEmail()));
 			}).collect(Collectors.toSet());
-
-			System.out.println(owners);
 			found.addOwner(owners);
 		}
 		Restaurant savedRes = restaurantRepository.save(found);
