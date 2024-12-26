@@ -45,7 +45,7 @@ public class Restaurant {
 	private double averageRating;
 	private double totalRatingValue = 0.0;
 	private int ratingCount = 0;
-	@ManyToMany(mappedBy = "restaurants", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(mappedBy = "restaurants", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	private Set<User> owners;
 
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

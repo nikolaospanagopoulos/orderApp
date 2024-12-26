@@ -32,8 +32,10 @@ public class RestaurantController {
 		this.restaurantService = restaurantService;
 	}
 
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<ApiResponse<RestaurantDto>> deleteRestaurant(@PathVariable(name = "id") long id) {
+		
 		restaurantService.deleteRestaurantById(id);
 		ApiResponse<RestaurantDto> res = new ApiResponse<>();
 		return new ResponseEntity<>(res, HttpStatus.OK);

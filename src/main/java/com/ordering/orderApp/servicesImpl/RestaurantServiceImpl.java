@@ -148,15 +148,26 @@ public class RestaurantServiceImpl implements RestaurantService {
 	}
 
 	@Override
-	public RestaurantDto getRestaurantById(long restaurantId) {
-		Restaurant found = getRestaurantEntityById(restaurantId);
-		return modelMapper.map(found, RestaurantDto.class);
+	public void deleteRestaurantById(long restautantId) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+		boolean userIsAdmin = userDetails.getAuthorities().stream()
+				.anyMatch(a -> a.getAuthority().equalsIgnoreCase("ROLE_ADMIN"));
+		String loggedInUsername = userDetails.getUsername();
+		Restaurant found = getRestaurantEntityById(restautantId);
+		boolean userIsOwner = found.getOwners().stream().anyMatch(o -> {
+			return o.getUsername().equals(loggedInUsername) && o.getEmail().equals(userDetails.getEmail());
+		});
+		if (!userIsOwner && !userIsAdmin) {
+			throw new UnauthorizedException("Unauthorized");
+		}
+		restaurantRepository.delete(found);
 	}
 
 	@Override
-	public void deleteRestaurantById(long restautantId) {
-		Restaurant found = getRestaurantEntityById(restautantId);
-		restaurantRepository.delete(found);
+	public RestaurantDto getRestaurantById(long restaurantId) {
+		Restaurant found = getRestaurantEntityById(restaurantId);
+		return modelMapper.map(found, RestaurantDto.class);
 	}
 
 }
