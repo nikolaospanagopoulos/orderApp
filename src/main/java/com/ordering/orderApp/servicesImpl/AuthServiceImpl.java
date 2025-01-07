@@ -19,7 +19,6 @@ import com.ordering.orderApp.exceptions.ResourceAlreadyExistsException;
 import com.ordering.orderApp.exceptions.UnauthorizedException;
 import com.ordering.orderApp.payload.LoginDto;
 import com.ordering.orderApp.payload.RegisterDto;
-import com.ordering.orderApp.payload.RoleDto;
 import com.ordering.orderApp.payload.UserDetailsDto;
 import com.ordering.orderApp.payload.entities.CustomUserDetails;
 import com.ordering.orderApp.repositories.RoleRepository;

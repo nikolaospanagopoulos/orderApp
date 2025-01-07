@@ -51,6 +51,9 @@ public class Restaurant {
 	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Dish> dishes;
 
+	@OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<Order> orders;
+
 	public void addRating(double ratingValue) {
 		this.totalRatingValue += ratingValue;
 		this.ratingCount++;
@@ -129,6 +132,7 @@ public class Restaurant {
 		this.dishes = new HashSet<Dish>();
 		this.ratings = new HashSet<Rating>();
 		this.owners = new HashSet<User>();
+		this.orders = new HashSet<Order>();
 	}
 
 	public double getAverageRating() {
@@ -197,6 +201,14 @@ public class Restaurant {
 
 	public void setOwners(Set<User> owners) {
 		this.owners = owners;
+	}
+
+	public Set<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Set<Order> orders) {
+		this.orders = orders;
 	}
 
 }
