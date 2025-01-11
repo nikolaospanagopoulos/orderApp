@@ -108,20 +108,9 @@ public class DishControllerTest {
 	}
 
 	private void testCreateDish() throws Exception {
-		String uniqueName = "test_name_" + UUID.randomUUID();
-		MvcResult mvcResult = this.mockMvc
-				.perform(post("/api/restaurants/" + idOfRestaurant + "/dishes")
-						.with(user(new CustomUserDetails("admin", "password", "admin@example.com",
-								List.of(new SimpleGrantedAuthority("ROLE_ADMIN")), "Admin", "User")))
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\n" + "    \"name\":\"test dish name " + uniqueName + "\",\n"
-								+ "    \"description\":\"test dish description\",\n" + "    \"price\":10.0,\n"
-								+ "    \"createdDate\": \"2024-03-15\"\n" + "}")
-						.characterEncoding("utf-8"))
-				.andExpect(status().isCreated()).andReturn();
-		ObjectMapper objectMapper = new ObjectMapper();
-		String responseContent = mvcResult.getResponse().getContentAsString();
-		JsonNode responseJson = objectMapper.readTree(responseContent);
-		idOfDish = responseJson.at("/data/id").asLong();
+		
+		idOfDish = TestUtilis.createDish(mockMvc, idOfRestaurant);
+		
+
 	}
 }

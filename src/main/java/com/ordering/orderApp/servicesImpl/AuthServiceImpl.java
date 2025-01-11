@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.ordering.orderApp.entities.Role;
 import com.ordering.orderApp.entities.User;
 import com.ordering.orderApp.exceptions.ResourceAlreadyExistsException;
+import com.ordering.orderApp.exceptions.ResourceNotFoundException;
 import com.ordering.orderApp.exceptions.UnauthorizedException;
 import com.ordering.orderApp.payload.LoginDto;
 import com.ordering.orderApp.payload.RegisterDto;
@@ -57,6 +58,30 @@ public class AuthServiceImpl implements AuthService {
 		return token;
 	}
 
+	public String createRoles() {
+
+		if (roleRepository.findByName("ROLE_USER").isEmpty()) {
+			Role roleUser = new Role();
+			roleUser.setName("ROLE_USER");
+			roleRepository.save(roleUser);
+		}
+
+		if (roleRepository.findByName("ROLE_OWNER").isEmpty()) {
+			Role roleOwner = new Role();
+			roleOwner.setName("ROLE_OWNER");
+
+			roleRepository.save(roleOwner);
+		}
+
+		if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
+			Role roleAdmin = new Role();
+			roleAdmin.setName("ROLE_ADMIN");
+			roleRepository.save(roleAdmin);
+		}
+
+		return "Roles created successfully";
+	}
+
 	@Override
 	public String register(RegisterDto registerDto) {
 		if (userRepository.existsByEmail(registerDto.getEmail())
@@ -68,7 +93,10 @@ public class AuthServiceImpl implements AuthService {
 		newUser.setPassword(passwordEncoder.encode(registerDto.getPassword()));
 		System.out.println(newUser);
 		Set<Role> roles = new HashSet<>();
-		Role userRole = roleRepository.findByName("ROLE_USER").get();
+
+		Role userRole = roleRepository.findByName("ROLE_USER")
+				.orElseThrow(() -> new ResourceNotFoundException("ROLE", "role", "user"));
+
 		roles.add(userRole);
 		newUser.setRoles(roles);
 		userRepository.save(newUser);

@@ -30,9 +30,13 @@ public class AuthController {
 
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
-		System.out.println(registerDto.getEmail());
 		String response = authService.register(registerDto);
-		System.out.println(response);
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	}
+
+	@GetMapping("/roles")
+	public ResponseEntity<String> createRoles() {
+		String response = authService.createRoles();
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
 	}
 

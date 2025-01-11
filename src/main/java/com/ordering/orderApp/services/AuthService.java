@@ -10,4 +10,6 @@ public interface AuthService {
 	String register(RegisterDto registerDto);
 
 	UserDetailsDto getUserInfo();
+
+	String createRoles();
 }

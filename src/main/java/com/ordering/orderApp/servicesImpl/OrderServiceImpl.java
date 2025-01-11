@@ -59,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
 		List<OrderItemDto> orderItems = order.getOrderItems().stream().map(o -> {
 			return new OrderItemDto(mapToDish(o.getDish()), o.getQuantity());
 		}).collect(Collectors.toList());
-
+		orderResponseDto.setStatus(order.getStatus());
 		orderResponseDto.setOrderItems(orderItems);
 		orderResponseDto.setUserFirstName(user.getUsername());
 		orderResponseDto.setUserLastName(user.getLastName());
